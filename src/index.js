@@ -1,2 +1,2 @@
-var s = ()=>{}
-document.write(s());
+import {str} from './component';
+console.log(str);

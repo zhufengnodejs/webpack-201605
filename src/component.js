@@ -1,1 +1,1 @@
-export default str = 'hello';
+export var  str = 'xxxx';

@@ -11,6 +11,15 @@ module.exports = {
         //指定打包后的文件名
         filename: 'bundle.js'
     },
+    devServer:{
+        //在web的html中访问文件的前缀
+        publicPath:'/static/',
+        //显示颜色
+        stats:{colors:true},
+        //监听的端口号
+        port:8080,
+        contentBase:'build'
+    },
     module: {//模块加载定义
         loaders: [//加载器
             {
