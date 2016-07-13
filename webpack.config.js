@@ -2,21 +2,22 @@
 var path = require('path');
 module.exports = {
     //打包的入口文件 resolve从当前路径出发找到另一个路径
-    entry:path.resolve('src/index.js'),//返回一个index.js的绝对路径
+    entry: path.resolve('src/index.js'),//返回一个index.js的绝对路径
     //entry:path.join(__dirname,'src','index.js')//返回一个index.js的绝对路径
     //配置打包后的结果
-    output:{
+    output: {
         //定义输出路径
-        path:path.resolve('build'),
+        path: path.resolve('build'),
         //指定打包后的文件名
-        filename:'bundle.js'
+        filename: 'bundle.js'
     },
-    module:{//模块加载定义
-        loaders:[//加载器
+    module: {//模块加载定义
+        loaders: [//加载器
             {
-                test:/\.js$/,//要加载的文件正则
-                loader:'babel',//加载器
-                query:['es2015','stage-0']//babel的预设，把es6代码编译成es5代码
+                test: /\.js$/,//要加载的文件正则
+                loader: 'babel',//加载器
+                include: path.resolve('src'),
+                exclude: /node_modules/
             }
         ]
     }
