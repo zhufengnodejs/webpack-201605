@@ -7,7 +7,7 @@ var openBrowserWebpackPlugin =  require('open-browser-webpack-plugin');
 var jqueryPath = path.resolve('node_modules/jquery/dist/jquery.js');
 var bootstrapPath = path.resolve('node_modules/bootstrap/dist/css/bootstrap.css');
 //执行路径的替换
-console.log('BUILD_DEV',process.env.BUILD_DEV);
+var ExtractTextWebpackPlugin =  require('extract-text-webpack-plugin');
 function rewrite(replacePath){
     //返回新的函数，负责替换每次的url
     return function(req,options){
@@ -22,19 +22,20 @@ function rewrite(replacePath){
 }
 module.exports = {
     //打包的入口文件 resolve从当前路径出发找到另一个路径
-    //entry: path.resolve('src/index.js'),//返回一个index.js的绝对路径
+    entry: path.resolve('src/index.js'),//返回一个index.js的绝对路径
     //entry还可以是个对象，表示多入口
-    entry:{
+    /*entry:{
         index:path.resolve('src/index.js'),
         user:path.resolve('src/index.js')
-    },
+    },*/
     //entry:path.join(__dirname,'src','index.js')//返回一个index.js的绝对路径
     //配置打包后的结果
     output: {
         //定义输出路径
         path: path.resolve('build'),
         //指定打包后的文件名 name引用的是entry的key
-        filename: '[name].js'
+        //如果不是多入口文件，又使用了[name]=main
+        filename: 'bundle.js'
     },
     //指示如何加载和解析模块
     resolve:{
@@ -85,10 +86,12 @@ module.exports = {
                 exclude: /node_modules/
             },{
                 test:/\.less$/,
-                loader:'style!css!less'
+                //在向页面中插入style标签之前把此css内容抽取出来
+                loader:ExtractTextWebpackPlugin.extract('style','css!less')
+
             },{
                 test:/\.css$/,//加载CSS的
-                loader:'style!css'
+                loader:ExtractTextWebpackPlugin.extract('style','css')
             },{
                 test:/\.(eot|svg|ttf|woff|woff2)$/,//加载图标
                 loader:'url?limit=8192'
@@ -105,6 +108,7 @@ module.exports = {
         new webpack.DefinePlugin({
             ___DEV___:(process.env.BUILD_DEV||'dev').trim()=='dev'
         }),
+        new ExtractTextWebpackPlugin('bundle.css'),
         //自动生成build目录下的html插件
         new htmlWebpackPlugin({
             title:'珠峰培训',//指定标题
