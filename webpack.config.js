@@ -67,6 +67,15 @@ module.exports = {
             },{
                 test:/\.less$/,
                 loader:'style!css!less'
+            },{
+                test:/\.css$/,//加载CSS的
+                loader:'style!css'
+            },{
+                test:/\.(eot|svg|ttf|woff|woff2)$/,//加载图标
+                loader:'url?limit=8192'
+            },{
+                test:/\.(png|jpg|bmp)$/,//加载图片
+                loader:'url?limit=8192'
             }
         ],
         //不需要扫描jquery的内部代码了，直接引用即可
