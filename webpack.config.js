@@ -1,11 +1,13 @@
 //导出一个配置对象
 var path = require('path');
+var webpack = require('webpack');
 var htmlWebpackPlugin = require('html-webpack-plugin');
 var openBrowserWebpackPlugin =  require('open-browser-webpack-plugin');
 //得到要加载的jquery的绝对路径
 var jqueryPath = path.resolve('node_modules/jquery/dist/jquery.js');
 var bootstrapPath = path.resolve('node_modules/bootstrap/dist/css/bootstrap.css');
 //执行路径的替换
+console.log('BUILD_DEV',process.env.BUILD_DEV);
 function rewrite(replacePath){
     //返回新的函数，负责替换每次的url
     return function(req,options){
@@ -35,7 +37,7 @@ module.exports = {
         extensions:["",".js",".css",".json",".less"],
         alias:{
             //一步到位指定加载文件的绝地路径，不用再东奔西走寻找了
-            'jquery':jqueryPath,
+            //'jquery':jqueryPath,
             'bootstrap':bootstrapPath
         }
     },
@@ -65,6 +67,11 @@ module.exports = {
     module: {//模块加载定义
         loaders: [//加载器
             {
+                //把jquery的导出对象挂载到window下面
+                test:/jquery.js$/,
+                loader:'expose?jQuery'
+            },
+            {
                 test: /\.js$/,//要加载的文件正则
                 loader: 'babel',//加载器
                 //只解析指定目录下的文件
@@ -86,15 +93,22 @@ module.exports = {
             }
         ],
         //不需要扫描jquery的内部代码了，直接引用即可
-        noParser:[jqueryPath]
+        //noParser:[jqueryPath]
     },
     plugins:[
+        //定义变量插件,这些变量会被挂载到window下面
+        new webpack.DefinePlugin({
+            ___DEV___:(process.env.BUILD_DEV||'dev').trim()=='dev'
+        }),
+        //自动生成build目录下的html插件
         new htmlWebpackPlugin({
             title:'珠峰培训',
             template:'./src/index.html'
         }),
+        //自动打开浏览器插件
         new openBrowserWebpackPlugin({
             url:'http://localhost:8080'
-        })
+        }),
+
     ]
 }
