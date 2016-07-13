@@ -1,5 +1,7 @@
 //导出一个配置对象
 var path = require('path');
+//得到要加载的jquery的绝对路径
+var jqueryPath = path.resolve('./node_modules/jquery/dist/jquery.js');
 //执行路径的替换
 function rewrite(replacePath){
     //返回新的函数，负责替换每次的url
@@ -23,6 +25,14 @@ module.exports = {
         path: path.resolve('build'),
         //指定打包后的文件名
         filename: 'bundle.js'
+    },
+    //指示如何加载和解析模块
+    resolve:{
+        //加载的时候会依次为文件添加这些后缀名尝试加载
+        extensions:["",".js",".css",".json",".less"],
+        alias:{
+            'jquery':jqueryPath
+        }
     },
     devServer:{
         //在web的html中访问文件的前缀
@@ -50,9 +60,16 @@ module.exports = {
             {
                 test: /\.js$/,//要加载的文件正则
                 loader: 'babel',//加载器
+                //只解析指定目录下的文件
                 include: path.resolve('src'),
+                //不解析node_modules的文件
                 exclude: /node_modules/
+            },{
+                test:/\.less$/,
+                loader:'style!css!less'
             }
-        ]
+        ],
+        //不需要扫描jquery的内部代码了，直接引用即可
+        noParser:[jqueryPath]
     }
 }
