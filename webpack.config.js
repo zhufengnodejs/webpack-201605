@@ -10,5 +10,14 @@ module.exports = {
         path:path.resolve('build'),
         //指定打包后的文件名
         filename:'bundle.js'
+    },
+    module:{//模块加载定义
+        loaders:[//加载器
+            {
+                test:/\.js$/,//要加载的文件正则
+                loader:'babel',//加载器
+                query:['es2015','stage-0']//babel的预设，把es6代码编译成es5代码
+            }
+        ]
     }
 }
