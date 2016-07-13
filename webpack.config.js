@@ -22,14 +22,19 @@ function rewrite(replacePath){
 }
 module.exports = {
     //打包的入口文件 resolve从当前路径出发找到另一个路径
-    entry: path.resolve('src/index.js'),//返回一个index.js的绝对路径
+    //entry: path.resolve('src/index.js'),//返回一个index.js的绝对路径
+    //entry还可以是个对象，表示多入口
+    entry:{
+        index:path.resolve('src/index.js'),
+        user:path.resolve('src/index.js')
+    },
     //entry:path.join(__dirname,'src','index.js')//返回一个index.js的绝对路径
     //配置打包后的结果
     output: {
         //定义输出路径
         path: path.resolve('build'),
-        //指定打包后的文件名
-        filename: 'bundle.js'
+        //指定打包后的文件名 name引用的是entry的key
+        filename: '[name].js'
     },
     //指示如何加载和解析模块
     resolve:{
@@ -102,8 +107,10 @@ module.exports = {
         }),
         //自动生成build目录下的html插件
         new htmlWebpackPlugin({
-            title:'珠峰培训',
-            template:'./src/index.html'
+            title:'珠峰培训',//指定标题
+            template:'./src/index.html',//指定模板
+            //如果只有一个入口文件此项不要配置
+            //chunks:['index','user']//指定要在html中插入哪些产出的文件
         }),
         //自动打开浏览器插件
         new openBrowserWebpackPlugin({
