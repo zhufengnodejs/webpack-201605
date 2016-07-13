@@ -1,7 +1,10 @@
 //导出一个配置对象
 var path = require('path');
+var htmlWebpackPlugin = require('html-webpack-plugin');
+var openBrowserWebpackPlugin =  require('open-browser-webpack-plugin');
 //得到要加载的jquery的绝对路径
-var jqueryPath = path.resolve('./node_modules/jquery/dist/jquery.js');
+var jqueryPath = path.resolve('node_modules/jquery/dist/jquery.js');
+var bootstrapPath = path.resolve('node_modules/bootstrap/dist/css/bootstrap.css');
 //执行路径的替换
 function rewrite(replacePath){
     //返回新的函数，负责替换每次的url
@@ -31,7 +34,9 @@ module.exports = {
         //加载的时候会依次为文件添加这些后缀名尝试加载
         extensions:["",".js",".css",".json",".less"],
         alias:{
-            'jquery':jqueryPath
+            //一步到位指定加载文件的绝地路径，不用再东奔西走寻找了
+            'jquery':jqueryPath,
+            'bootstrap':bootstrapPath
         }
     },
     devServer:{
@@ -39,6 +44,8 @@ module.exports = {
         //publicPath:'/static/',
         //显示颜色
         stats:{colors:true},
+        //会在页面中自动插入一个脚本，跟服务器通信
+        inline:true,
         //监听的端口号
         port:8080,
         //指定了服务器的根目录指向是硬盘上的哪个目录
@@ -80,5 +87,14 @@ module.exports = {
         ],
         //不需要扫描jquery的内部代码了，直接引用即可
         noParser:[jqueryPath]
-    }
+    },
+    plugins:[
+        new htmlWebpackPlugin({
+            title:'珠峰培训',
+            template:'./src/index.html'
+        }),
+        new openBrowserWebpackPlugin({
+            url:'http://localhost:8080'
+        })
+    ]
 }
