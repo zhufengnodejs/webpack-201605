@@ -18,7 +18,7 @@ img.src = require('./avatar.jpg');
 document.body.appendChild(img);
 //这个变量是defineplugin挂载到全局对象下面的
 if(___DEV___){
-    console.log('这是开发环境');
+    console.log('这是开发环境333');
     console.log('这是开发环境的日志，只有开发环境才能输出');
 }else{
     console.log('这是生产环境');

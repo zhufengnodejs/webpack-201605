@@ -22,12 +22,12 @@ function rewrite(replacePath){
 }
 module.exports = {
     //打包的入口文件 resolve从当前路径出发找到另一个路径
-    entry: path.resolve('src/index.js'),//返回一个index.js的绝对路径
+    //entry: path.resolve('src/index.js'),//返回一个index.js的绝对路径
     //entry还可以是个对象，表示多入口
-    /*entry:{
+    entry:{
         index:path.resolve('src/index.js'),
-        user:path.resolve('src/index.js')
-    },*/
+        vendor:['jquery']
+    },
     //entry:path.join(__dirname,'src','index.js')//返回一个index.js的绝对路径
     //配置打包后的结果
     output: {
@@ -35,7 +35,7 @@ module.exports = {
         path: path.resolve('build'),
         //指定打包后的文件名 name引用的是entry的key
         //如果不是多入口文件，又使用了[name]=main
-        filename: 'bundle.js'
+        filename: '[name].[hash].js'
     },
     //指示如何加载和解析模块
     resolve:{
@@ -109,6 +109,26 @@ module.exports = {
             ___DEV___:(process.env.BUILD_DEV||'dev').trim()=='dev'
         }),
         new ExtractTextWebpackPlugin('bundle.css'),
+       // new webpack.optimize.CommonsChunkPlugin('vendor','vendor.js'),
+        new webpack.optimize.CommonsChunkPlugin('common.js'),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        }),
+        new webpack.optimize.MinChunkSizePlugin({
+            compress: {
+                warnings: false
+            }
+        }),
+        // 查找相等或近似的模块，避免在最终生成的文件中出现重复的模块
+        new webpack.optimize.DedupePlugin(),
+        // 按引用频度来排序 ID，以便达到减少文件大小的效果
+        new webpack.optimize.OccurenceOrderPlugin(),
+        new webpack.optimize.AggressiveMergingPlugin({
+            minSizeReduce: 1.5,
+            moveToParents: true
+        }),
         //自动生成build目录下的html插件
         new htmlWebpackPlugin({
             title:'珠峰培训',//指定标题
